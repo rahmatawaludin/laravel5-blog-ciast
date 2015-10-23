@@ -11,13 +11,11 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'PostsController@index');
 
-Route::get('/about', function() {
+Route::get('/about', ['middleware'=>'auth', function() {
     return view('about');
-});
+}]);
 
 Route::get('/foo', function() {
     return 'bar';
@@ -42,11 +40,16 @@ Route::post('login-submit', function() {
     return $result;
 });
 
-Route::get('posts', function() {
-    return view('posts.index');
-});
+Route::resource('posts', 'PostsController');
+Route::resource('categories', 'CategoriesController');
+Route::get('home', 'PostsController@index');
 
-Route::get('posts/{id}', function($id) {
-    $post = App\Post::find($id);
-    return view('posts.show')->with('post', $post);
-});
+/** Authentication Stuff */
+// Authentication routes...
+Route::get('auth/login', 'Auth\AuthController@getLogin');
+Route::post('auth/login', 'Auth\AuthController@postLogin');
+Route::get('auth/logout', 'Auth\AuthController@getLogout');
+
+// Registration routes...
+Route::get('auth/register', 'Auth\AuthController@getRegister');
+Route::post('auth/register', 'Auth\AuthController@postRegister');
